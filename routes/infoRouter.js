@@ -10,9 +10,9 @@ router.route("/insertdata").get(insertAllData);
 router.route("/gettransactionStatistics").get(getTransactionStatistics);
 // use this end point: "/api/v1/gettansactiontable?month=5&year=2022"     
 router.route("/gettransactionbarchart").get(getTransactionBarChart);
-// use this end point: ' /api/v1/gettansactiontable?page=1&perPage=15&search="Jacket" '
+// use this end point: ' /api/v1/gettansactiontable?page=1&perPage=15&search=Sandisk '
 router.route("/gettansactiontable").get(getTransactionTable);
-// use this end point: '/api/v1/combinealldata?month=5&year=2022&page=1&perPage=15&search="Jacket" ' 
+// use this end point: '/api/v1/combinealldata?month=5&year=2022&page=1&perPage=15&search=Sandisk' 
 router.route("/combinealldata").get(combineAllData);
 // use this end point: "/api/v1/gettransactionpiechart?month=5&year=2022"
 router.route("/gettransactionpiechart").get(getTransactionPieChart);

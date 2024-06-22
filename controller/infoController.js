@@ -122,37 +122,25 @@ export const getTransactionBarChart = catchAsyncError(async (req, res, next) => 
 
 
 // access this route using this Url
-// http://localhost:5000/api/v1/combinealldata?month=5&year=2022&page=""&perPage=""
+// http://localhost:5000/api/v1/combinealldata?month=5&year=2022&page=1&perPage=10&search=Sandisk 
 export const getTransactionTable = catchAsyncError(async (req, res, next) => {
     const search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
     const perPage = parseInt(req.query.perPage) || 10;
-
-
-
-
-    const totalCount = await Product.countDocuments({
-        title: {
-            $regex: search,
-            $options: "i",
-        },
-        description: {
-            $regex: search,
-            $options: "i",
+    const query = search
+        ? {
+            $or: [
+                { title: { $regex: search, $options: "i" } },
+                { description: { $regex: search, $options: "i" } },
+            ],
         }
-    });
+        : {};
 
 
-    const transactions = await Product.find({
-        title: {
-            $regex: search,
-            $options: "i",
-        },
-        description: {
-            $regex: search,
-            $options: "i",
-        }
-    }).skip((page - 1) * perPage).limit(perPage);
+    const totalCount = await Product.countDocuments(query);
+
+
+    const transactions = await Product.find(query).skip((page - 1) * perPage).limit(perPage);
 
 
     const responseData = {
@@ -173,6 +161,7 @@ export const getTransactionTable = catchAsyncError(async (req, res, next) => {
 
 export const combineAllData = catchAsyncError(async (req, res, next) => {
     const search = req.query.search || "";
+
     const page = parseInt(req.query.page) || 1;
     const perPage = parseInt(req.query.perPage) || 10;
     const month = req.query.month || "";
@@ -182,14 +171,18 @@ export const combineAllData = catchAsyncError(async (req, res, next) => {
     const getTransactionBarChart = await data.json();
     data = await fetch(`${process.env.BACKEND_URL}/gettransactionStatistics?month=${month}&year=${year}`);
     const getTransactionStatistics = await data.json();
-    data = await fetch(`${process.env.BACKEND_URL}/gettansactiontable?search=${search}&page=${page}&perPage=${perPage}`);
+    const query = `${process.env.BACKEND_URL}/gettansactiontable?page=${page}&perPage=${perPage}&search=${search}`
+    data = await fetch(query);
     const getTransactionTable = await data.json();
+    data = await fetch(`${process.env.BACKEND_URL}/gettransactionpiechart?month=${month}&year=${year}`);
+    const getTransactionPieChart = await data.json();
 
     res.status(200).json({
         success: true,
         getTransactionBarChart,
         getTransactionStatistics,
-        getTransactionTable
+        getTransactionTable,
+        getTransactionPieChart,
     });
 });
 
