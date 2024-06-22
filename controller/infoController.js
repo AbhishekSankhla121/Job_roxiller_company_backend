@@ -133,7 +133,6 @@ export const getTransactionTable = catchAsyncError(async (req, res, next) => {
             $or: [
                 { title: { $regex: search, $options: "i" } },
                 { description: { $regex: search, $options: "i" } },
-                { price: { $regex: search, $options: "i" } },
             ],
         }
         : {};
