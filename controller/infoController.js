@@ -128,22 +128,31 @@ export const getTransactionTable = catchAsyncError(async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const perPage = parseInt(req.query.perPage) || 10;
 
-    const query = search
-        ? {
-            $or: [
-                { title: { $regex: search, $options: "i" } },
-                { description: { $regex: search, $options: "i" } },
-            ],
+
+
+
+    const totalCount = await Product.countDocuments({
+        title: {
+            $regex: search,
+            $options: "i",
+        },
+        description: {
+            $regex: search,
+            $options: "i",
         }
-        : {};
+    });
 
 
-    const totalCount = await Product.countDocuments(query);
-
-
-    const transactions = await Product.find(query)
-        .skip((page - 1) * perPage)
-        .limit(perPage);
+    const transactions = await Product.find({
+        title: {
+            $regex: search,
+            $options: "i",
+        },
+        description: {
+            $regex: search,
+            $options: "i",
+        }
+    }).skip((page - 1) * perPage).limit(perPage);
 
 
     const responseData = {
